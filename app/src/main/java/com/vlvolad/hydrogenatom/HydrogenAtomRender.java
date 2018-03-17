@@ -66,6 +66,8 @@ public class HydrogenAtomRender {
     FloatBuffer trinormalanimf;
     FloatBuffer tricoloranimf;
 
+    FloatBuffer lineVertexBuffer;
+
     // how many triangles already generated
     volatile int trcnt, trcntanim;
     boolean anim, rounderror;
@@ -177,6 +179,33 @@ public class HydrogenAtomRender {
         Matrix.setIdentityM(mAccumulatedRotation, 0);
         mCurrentRotation = new float[16];
         Matrix.setIdentityM(mCurrentRotation, 0);
+
+
+        // For rotating axes
+        ByteBuffer vbb = ByteBuffer.allocateDirect(18 * 4);
+        vbb.order(ByteOrder.nativeOrder());
+        lineVertexBuffer = vbb.asFloatBuffer();
+        // x axis
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(1.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        // y axis
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(1.f);
+        lineVertexBuffer.put(0.f);
+        // z axis
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(0.f);
+        lineVertexBuffer.put(1.f);
     }
 
     void pickRandomOrbital(int nmax) {
@@ -332,6 +361,87 @@ public class HydrogenAtomRender {
         buf.put(z);
         buf.put(w);
         return buf;
+    }
+
+    public void drawAxes(GL10 unused, int Width, int Height)
+    {
+        HAGLRenderer.perspectiveGL(mProjMatrix, 45.0f,(float)(Width)/Height,10.0f,4000.0f);
+        Matrix.setIdentityM(mVMatrix, 0);
+
+        float xymove = 5.5f;
+        Matrix.translateM(mVMatrix, 0, xymove * (float)(Width)/Height, 0.9f*xymove, -20.f);
+
+        float dx = camera_rot[0] - camera_rot_lag[0];
+        float dy = camera_rot[1] - camera_rot_lag[1];
+        float dz = camera_rot[2] - camera_rot_lag[2];
+
+        for (int k = 0; k < 3; ++k)
+        {
+            camera_trans_lag[k] += (camera_trans[k] - camera_trans_lag[k]);// * inertia;
+            camera_rot_lag[k] += (camera_rot[k] - camera_rot_lag[k]);// * inertia;
+        }
+        Matrix.translateM(mVMatrix, 0, camera_trans_lag[0],
+                camera_trans_lag[1],
+                camera_trans_lag[2]);
+
+
+        {
+            Matrix.setIdentityM(mCurrentRotation, 0);
+            Matrix.rotateM(mCurrentRotation, 0, dx, 1.0f, 0.0f, 0.0f);
+            Matrix.rotateM(mCurrentRotation, 0, dy, 0.0f, 0.0f, -1.0f);
+            //Matrix.rotateM(mCurrentRotation, 0, dz, 0.0f, 1.0f, 0.0f);
+
+            float[] mTemporaryMatrix = new float[16];
+            // Multiply the current rotation by the accumulated rotation, and then set the accumulated
+            // rotation to the result.
+            Matrix.multiplyMM(mTemporaryMatrix, 0, mCurrentRotation, 0, mAccumulatedRotation, 0);
+            System.arraycopy(mTemporaryMatrix, 0, mAccumulatedRotation, 0, 16);
+
+            // Rotate the cube taking the overall rotation into account.
+            Matrix.multiplyMM(mTemporaryMatrix, 0, mVMatrix, 0, mAccumulatedRotation, 0);
+            System.arraycopy(mTemporaryMatrix, 0, mVMatrix, 0, 16);
+        }
+
+        float mn = 1.f;
+
+        Matrix.scaleM(mVMatrix, 0, mn, mn, mn);
+
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
+
+        int tHandle = GLES20.glGetUniformLocation(mProgram, "u_mvpMatrix");
+        GLES20.glUniformMatrix4fv(tHandle, 1, false, mMVPMatrix, 0);
+        tHandle = GLES20.glGetUniformLocation(mProgram, "u_mvMatrix");
+        GLES20.glUniformMatrix4fv(tHandle, 1, false, mVMatrix, 0);
+
+        int tHandleColor = GLES20.glGetUniformLocation(mProgram, "color");
+        GLES20.glUniform4f(tHandleColor, 1.0f, 1.0f, 1.0f, 1.0f);
+
+        int mPositionHandle = GLES20.glGetAttribLocation(mProgram, "a_position");
+        GLES20.glEnableVertexAttribArray(mPositionHandle);
+
+        // x axis
+        lineVertexBuffer.position(12);
+        GLES20.glVertexAttribPointer(mPositionHandle, 3,
+                GLES20.GL_FLOAT, false,
+                0, lineVertexBuffer);
+        GLES20.glUniform4f(tHandleColor, 1.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glDrawArrays(GLES20.GL_LINES, 0, 2);
+
+        // y axis
+        lineVertexBuffer.position(0);
+        GLES20.glVertexAttribPointer(mPositionHandle, 3,
+                GLES20.GL_FLOAT, false,
+                0, lineVertexBuffer);
+        GLES20.glUniform4f(tHandleColor, 0.0f, 1.0f, 0.0f, 1.0f);
+        GLES20.glDrawArrays(GLES20.GL_LINES, 0, 2);
+
+        // z axis
+        lineVertexBuffer.position(6);
+        GLES20.glVertexAttribPointer(mPositionHandle, 3,
+                GLES20.GL_FLOAT, false,
+                0, lineVertexBuffer);
+        GLES20.glUniform4f(tHandleColor, 0.0f, 0.0f, 1.0f, 1.0f);
+        GLES20.glDrawArrays(GLES20.GL_LINES, 0, 2);
     }
 
     //отображение поверхностей

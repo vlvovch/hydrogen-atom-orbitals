@@ -60,6 +60,9 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
 
         // Draw pendulum
         mAtom.draw(unused, Width, Height);
+
+        // Draw axes
+        mAtom.drawAxes(unused, Width, Height);
     }
 
     @Override
@@ -143,6 +146,7 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
                     "    } \n" +
                     "    v_light = ambientLight + diffuseLight + specularLight; \n" +
                     "    v_color = a_color; \n" +
+                    //"    v_color = color; \n" +
                     "    gl_Position = u_mvpMatrix * mcPosition; \n" +
                     "}";
 
@@ -156,7 +160,7 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
                     "varying vec4 v_color; \n" +
                     "void main() { \n" +
                     "    if (light>0) gl_FragColor = v_light; \n" +
-                    "    else if (trajectory>0) gl_FragColor = v_color; \n" +
+                    //"    else if (trajectory>0) gl_FragColor = v_color; \n" +
                     "    else gl_FragColor = color; \n" +
                     "}";
 
