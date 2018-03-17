@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config {
+        release {
             Properties properties = new Properties()
             properties.load(project.rootProject.file('local.properties').newDataInputStream())
             if (properties!=null && properties.containsKey('storeFile') && properties.containsKey('keyAlias') &&
@@ -28,7 +28,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            signingConfig signingConfigs.release
         }
     }
     productFlavors {

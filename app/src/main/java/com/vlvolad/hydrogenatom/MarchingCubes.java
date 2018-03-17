@@ -10,6 +10,11 @@ package com.vlvolad.hydrogenatom;
 /**
  * Created by Volodymyr on 28.04.2015.
  */
+/*
+ * The code below uses parts of the public domain Marching Cubes Example Program by Cory Bloyd (corysama@yahoo.com)
+ * For the description of the algorithm see  http://astronomy.swin.edu.au/pbourke/modelling/polygonise/
+ * and also http://paulbourke.net/geometry/polygonise/
+ */
 public class MarchingCubes {
     //a2fVertexOffset lists the positions, relative to vertex0, of each of the 8 vertices of a cube
     static final float a2fVertexOffset[][] =
