@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Атом Водорода</string>
+    <string name="about">Информация</string>
+    <string name="about_text_1a">Орбитали атома водорода</string>
+    <string name="about_text_1b">Версия: 1.0.3</string>
+    <string name="about_text_2">© Volodymyr Vovchenko</string>
+    <string name="activity_name">Орбитали атома водорода</string>
+    <string name="btn_finish_about_label">Закрыть</string>
+    <string name="orbital">Орбиталь:</string>
+    <string name="btn_orbital_cancel_label">Отмена</string>
+    <string name="btn_orbital_ok_label">OK</string>
+    <string name="discrete_warning">Недостаточно памяти! Увеличте шаг дискретизации</string>
+    <string name="google_play">Оценить это приложение</string>
+    <string name="information">Информация</string>
+    <string name="orbital_selection">Выбор орбитали</string>
+    <string name="percent">Процент:</string>
+    <string name="radio_complex">Компл.</string>
+    <string name="radio_real">Действит.</string>
+    <string name="random_orbital">Случ. орбиталь</string>
+    <string name="stepsize">Размер шага:</string>
+    <string name="wave_function_type">Базис:</string>
+    <string name="wikipedia_link">Больше информации</string>
+    <string name="help_description">В этом приложении проводится визуализация орбиталей атома водорода. Сами орбитали определены как сечение плотности вероятности найти электрон в точке пространства, которая в свою очередь определяется квадратом волновой функции собственных состояний атома водорода.\n\nВизуализация орбиталей производится в OpenGL, с использованием алгоритма Marching Cubes. Пользователь имеет возможность выбрать орбиталь для отображения задав квантовые числа n, l и m, а также тип базиса волновых функций. Также есть возможность регулировать уровень дискретизации и задать полную вероятность найти электрон внутри отображаемой поверхности.</string>
+    <string name="numbers_condition">Условия на квантовые числа:\n0\u003cn, 0\u003c=l\u003cn, -l\u003c=m\u003c=l</string>
+    <string name="more_apps">Больше приложений</string>
+    <string name="share">Поделиться</string>
+    <string name="information_wiki">Wikipedia</string>
+    <string name="quantumoscillator_link_text" >А также:</string>
+    <string name="quantumoscillator_link">Quantum Oscillator app</string>
+    <string name="version">Версия:</string>
+    <string name="share_subject">Hydrogen Atom Orbitals app for Android</string>
+    <string name="share_text" >Visualize Hydrogen Atom Orbitals in 3D!\\nhttps://play.google.com/store/apps/details?id=com.vlvolad.hydrogenatom</string>
+    <string name="share_via">Поделиться этим приложением через</string>
+    <string name="wikipedia_url">https://ru.wikipedia.org/wiki/%D0%90%D1%82%D0%BE%D0%BC_%D0%B2%D0%BE%D0%B4%D0%BE%D1%80%D0%BE%D0%B4%D0%B0</string>
+    <string name="github_link">Исходный код</string>
+    <string name="github_url">https://github.com/vlvovch/hydrogen-atom-orbitals</string>
+</resources>

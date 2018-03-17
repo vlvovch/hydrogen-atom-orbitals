@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Wasserstoffatom</string>
+    <string name="activity_name">Orbitale eines Wasserstoffatoms</string>
+    <string name="percent">Prozent:</string>
+    <string name="stepsize">Schrittweite:</string>
+    <string name="random_orbital">Zufälliges Orbital</string>
+    <string name="orbital_selection">Auswahl eines Orbitals</string>
+    <string name="wave_function_type">Basistyp:</string>
+    <string name="radio_complex">Komplex</string>
+    <string name="radio_real">Reelle</string>
+    <string name="discrete_warning">Nicht genug Speicher, erhöhe bitte die Schrittweite!</string>
+    <string name="numbers_condition">Quantenzahlen erfüllen:\n0\u003cn, 0\u003c=l\u003cn, -l\u003c=m\u003c=l</string>
+
+    <string name="orbital">Orbital:</string>
+
+    <string name="btn_orbital_ok_label">OK</string>
+    <string name="btn_orbital_cancel_label">Abbrechen</string>
+
+    <string name="help_description">Diese App visualisiert Elektronenorbitale eines Wasserstoffatoms. Die Orbitale werden mit Hilfe von Isoflächen der
+	Aufenthaltswahrscheinlichkeit von Elektronen dargestellt, wobei die Wahrscheinlichkei durch das Quadrat der Wellenfunktion des Energie-Eigenzustandes gegeben ist.\n\nDie Veranschaulichung von Orbitalen wird unter OpenGL mit dem Marching-Cubes-Algorithmus ausgeführt. Es können Quantenzahlen n, l und m für das Orbital sowie der Basistyp von Wellenfunktionen ausgewählt werden. Zusätzlich ist es möglich sowohl die gewünschte Schrittweite wie auch die totale Wahrscheinlichkeit einzustellen, um ein Elektron innerhalb der abgebildeten Isofläche zu finden.</string>
+	
+	<string name="wikipedia_link">Mehr auf Wikipedia</string>
+
+    <string name="information">Über</string>
+    <string name="about">Über</string>
+    <string name="about_text_1a">Wasserstoffatom-Orbitale</string>
+    <string name="about_text_1b">Version: 1.0.3</string>
+    <string name="btn_finish_about_label">Schließen</string>
+    <string name="about_text_2">© Volodymyr Vovchenko</string>
+
+    <string name="more_apps">Weitere Apps</string>
+
+    <string name="google_play">Bewerte diese App</string>
+    <string name="information_wiki">Wikipedia</string>
+    <string name="quantumoscillator_link_text" >Siehe auch:</string>
+    <string name="quantumoscillator_link">Quantenoszillator app</string>
+    <string name="share">Teilen</string>
+    <string name="version">Version:</string>
+    <string name="share_subject">Wasserstoffatom-Orbitale app für Android</string>
+    <string name="share_text" >Visualisierung von Wasserstoff-Atom-Orbitalen in 3D!\\nhttps://play.google.com/store/apps/details?id=com.vlvolad.hydrogenatom</string>
+    <string name="share_via">Teilen Sie diese App</string>
+    <string name="wikipedia_url">https://de.wikipedia.org/wiki/Atomorbital</string>
+    <string name="github_link">Quelltext</string>
+    <string name="github_url">https://github.com/vlvovch/hydrogen-atom-orbitals</string>
+</resources>

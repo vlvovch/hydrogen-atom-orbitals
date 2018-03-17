@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Atome d\'Hydrogène</string>
+    <string name="activity_name">Orbitales d\'atomes d\'hydrogène</string>
+    <string name="percent">Pour cent:</string>
+    <string name="stepsize">Taille du pas:</string>
+    <string name="random_orbital">Orbitale aléatoire</string>
+    <string name="orbital_selection">Sélection d\'orbitale</string>
+    <string name="wave_function_type">Base:</string>
+    <string name="radio_complex">Complexe</string>
+    <string name="radio_real">Réel</string>
+    <string name="discrete_warning">Pas assez de mémoire! Augmenter la taille du pas de discrétisation</string>
+    <string name="numbers_condition">Les nombres quantiques doivent satisfaire:\n0\u003cn, 0\u003c=l\u003cn, -l\u003c=m\u003c=l</string>
+
+    <string name="orbital">Orbitale:</string>
+
+    <string name="btn_orbital_ok_label">OK</string>
+    <string name="btn_orbital_cancel_label">Annuler</string>
+
+    <string name="help_description">Cette application visualise les orbitales de l\'atome d\'hydrogène. Les orbitales sont définis comme des sections transversales de la densité de probabilité pour trouver un électron à un point spatial particulier qui est défini par le carré de la fonction d\'onde de l\'état propre d\'énergie.\n\n La visualisation des orbitales est réalisée par OpenGL en utilisant l\'algorithme des "Marching Cubes". L\'utilisateur peut choisir l\'orbitale en spécifiant les nombres quantiques n, l et m ainsi que le type de base des fonctions d\'ondes. Il est également possible de réguler le niveau de discrétisation ainsi que la probabilité totale de trouver l\'électron dans la surface orbitale dessinée. </string>
+	
+	<string name="wikipedia_link">Plus d\'informations</string>
+
+    <string name="information">Information</string>
+    <string name="about">A propos </string>
+    <string name="about_text_1a">Orbitales d\'atomes d\'hydrogène</string>
+    <string name="about_text_1b">Version: 1.0.3</string>
+    <string name="btn_finish_about_label">Fermer</string>
+    <string name="about_text_2">© Volodymyr Vovchenko, Hamda Cherif</string>
+
+    <string name="more_apps">Plus d\'applications</string>
+
+    <string name="google_play">Évaluer l\'application</string>
+	<string name="share">Partager</string>
+    <string name="information_wiki">Wikipedia</string>
+    <string name="quantumoscillator_link_text">Voir également:</string>
+    <string name="quantumoscillator_link">Quantum Oscillator app</string>
+    <string name="version">Version:</string>
+    <string name="share_subject">Application Orbitales d\'atomes d\'hydrogène pour Android</string>
+    <string name="share_text">Visualize Hydrogen Atom Orbitals in 3D!\\nhttps://play.google.com/store/apps/details?id=com.vlvolad.hydrogenatom</string>
+    <string name="share_via">Partager l\'application via</string>
+    <string name="wikipedia_url">https://fr.wikipedia.org/wiki/Orbitale_atomique</string>
+    <string name="github_link">Code source</string>
+    <string name="github_url">https://github.com/vlvovch/hydrogen-atom-orbitals</string>
+</resources>

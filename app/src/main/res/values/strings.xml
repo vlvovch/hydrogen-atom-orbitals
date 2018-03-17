@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Hydrogen Atom</string>
+    <string name="activity_name">Hydrogen Atom Orbitals</string>
+    <string name="percent">Percent:</string>
+    <string name="stepsize">Step size:</string>
+    <string name="random_orbital">Random orbital</string>
+    <string name="orbital_selection">Orbital selection</string>
+    <string name="wave_function_type">Basis:</string>
+    <string name="radio_complex">Complex</string>
+    <string name="radio_real">Real</string>
+    <string name="discrete_warning">Not enough memory! Increase discretization step size</string>
+    <string name="numbers_condition">Quantum numbers must satisfy:\n0\u003cn, 0\u003c=l\u003cn, -l\u003c=m\u003c=l</string>
+
+    <string name="orbital">Orbital:</string>
+
+    <string name="btn_orbital_ok_label">OK</string>
+    <string name="btn_orbital_cancel_label">Cancel</string>
+
+    <string name="help_description">This app visualizes electron orbitals of the hydrogen atom. The orbitals are defined as cross-sections of the probability density to find electron at a particular space point which is defined by the square of the wave function of the energy eigenstate.\n\nOrbital visualization is performed in OpenGL using the Marching Cubes algorithm. User can choose the orbital by specifying the quantum numbers n, l and m, as well the type of the wave functions basis. It is also possible to regulate the level of discretization as well as the total probability to find the electron inside the drawn orbital surface.</string>
+	
+	<string name="wikipedia_link">More info at Wikipedia</string>
+
+    <string name="information">About</string>
+    <string name="about">About</string>
+    <string name="about_text_1a">Hydrogen Atom Orbitals</string>
+    <string name="about_text_1b">Version: 1.0.3</string>
+    <string name="btn_finish_about_label">Close</string>
+    <string name="about_text_2">© Volodymyr Vovchenko</string>
+
+    <string name="more_apps">More apps</string>
+
+    <string name="google_play">Rate this app</string>
+    <string name="share">Share</string>
+    <string name="information_wiki">Wikipedia</string>
+    <string name="quantumoscillator_link_text">See also:</string>
+    <string name="quantumoscillator_link">Quantum Oscillator app</string>
+    <string name="version">Version:</string>
+    <string name="share_subject">Hydrogen Atom Orbitals app for Android</string>
+    <string name="share_text">Visualize Hydrogen Atom Orbitals in 3D!\\nhttps://play.google.com/store/apps/details?id=com.vlvolad.hydrogenatom</string>
+    <string name="share_via">Share this app via</string>
+    <string name="wikipedia_url">https://en.wikipedia.org/wiki/Atomic_orbital</string>
+    <string name="github_link">Source code</string>
+    <string name="github_url">https://github.com/vlvovch/hydrogen-atom-orbitals</string>
+</resources>
