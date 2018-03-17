@@ -5,10 +5,13 @@ android {
         config {
             Properties properties = new Properties()
             properties.load(project.rootProject.file('local.properties').newDataInputStream())
-            storeFile file(properties.getProperty('storeFile'))
-            keyAlias properties.getProperty('keyAlias')
-            storePassword properties.getProperty('storePassword')
-            keyPassword properties.getProperty('keyPassword')
+            if (properties!=null && properties.containsKey('storeFile') && properties.containsKey('keyAlias') &&
+                    properties.containsKey('storePassword') && properties.containsKey('keyPassword')) {
+                storeFile file(properties.getProperty('storeFile'))
+                keyAlias properties.getProperty('keyAlias')
+                storePassword properties.getProperty('storePassword')
+                keyPassword properties.getProperty('keyPassword')
+            }
         }
     }
     compileSdkVersion 25
@@ -25,9 +28,6 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
-        }
-        debug {
             signingConfig signingConfigs.config
         }
     }
