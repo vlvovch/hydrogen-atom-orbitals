@@ -7,6 +7,12 @@
         android:icon="@android:drawable/ic_menu_share"
         hydrogenatom:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/settings"
+        hydrogenatom:showAsAction="never"/>
+    <item
         android:id="@+id/action_wiki"
         android:orderInCategory="100"
         android:icon="@drawable/ic_action_wiki"

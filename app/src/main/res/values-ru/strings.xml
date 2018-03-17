@@ -35,4 +35,7 @@
     <string name="wikipedia_url">https://ru.wikipedia.org/wiki/%D0%90%D1%82%D0%BE%D0%BC_%D0%B2%D0%BE%D0%B4%D0%BE%D1%80%D0%BE%D0%B4%D0%B0</string>
     <string name="github_link">Исходный код</string>
     <string name="github_url">https://github.com/vlvovch/hydrogen-atom-orbitals</string>
+    <string name="settings">Настройки</string>
+    <string name="pref_showaxes">Оси координат</string>
+    <string name="pref_showaxes_summary">Показывает оси координат в правом верхнем углу экрана.</string>
 </resources>

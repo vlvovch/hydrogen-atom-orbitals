@@ -21,6 +21,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SettingsActivity"
+            android:theme="@style/AppTheme" >
+        </activity>
+
         <activity android:name=".InformationActivity"
             android:theme="@style/AppThemeNoTitle" >
         </activity>

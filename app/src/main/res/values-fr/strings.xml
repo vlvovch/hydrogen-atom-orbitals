@@ -42,4 +42,7 @@
     <string name="wikipedia_url">https://fr.wikipedia.org/wiki/Orbitale_atomique</string>
     <string name="github_link">Code source</string>
     <string name="github_url">https://github.com/vlvovch/hydrogen-atom-orbitals</string>
+    <string name="settings">Parametres</string>
+    <string name="pref_showaxes">Axes de coordonnées</string>
+    <string name="pref_showaxes_summary">Afficher les axes de coordonnées dans le coin supérieur droit.</string>
 </resources>

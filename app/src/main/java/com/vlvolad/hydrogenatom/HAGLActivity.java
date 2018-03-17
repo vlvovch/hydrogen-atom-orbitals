@@ -47,6 +47,8 @@ public class HAGLActivity extends Activity {
 
     private String mapl;
 
+    private static Context contextOfApplication;
+
     static int frequency = 50;
 
     //runs without a timer by reposting this handler at the end of the runnable
@@ -101,6 +103,8 @@ public class HAGLActivity extends Activity {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         setContentView(R.layout.hydrogenatom_gl);
+
+        contextOfApplication = getApplicationContext();
 
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
@@ -319,6 +323,10 @@ public class HAGLActivity extends Activity {
 
     }
 
+    public static Context getContextOfApplication(){
+        return contextOfApplication;
+    }
+
     private void regenerate() {
         if (!isRunning) {
             HAGLRenderer.mAtom.n = PreferenceManager.getDefaultSharedPreferences(
@@ -474,6 +482,10 @@ public class HAGLActivity extends Activity {
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getText(R.string.share_text).toString());
                 startActivity(Intent.createChooser(sharingIntent, getText(R.string.share_via).toString()));
                 return true;
+            case R.id.action_settings:
+                Intent intentParam = new Intent(HAGLActivity.this, SettingsActivity.class);
+                startActivity(intentParam);
+                return true;
             case R.id.action_wiki:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getText(R.string.wikipedia_url).toString())));
                 return true;
@@ -493,7 +505,7 @@ public class HAGLActivity extends Activity {
                 return true;
             case R.id.action_information:
                 //showHelp();
-                Intent intentParam = new Intent(HAGLActivity.this, InformationActivity.class);
+                intentParam = new Intent(HAGLActivity.this, InformationActivity.class);
                 startActivity(intentParam);
                 return true;
             default:

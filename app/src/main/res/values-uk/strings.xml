@@ -35,4 +35,7 @@
     <string name="wikipedia_url">https://uk.wikipedia.org/wiki/%D0%90%D1%82%D0%BE%D0%BC_%D0%B2%D0%BE%D0%B4%D0%BD%D1%8E</string>
     <string name="github_link">Вихідний код</string>
     <string name="github_url">https://github.com/vlvovch/hydrogen-atom-orbitals</string>
+    <string name="settings">Налаштування</string>
+    <string name="pref_showaxes">Вісі координат</string>
+    <string name="pref_showaxes_summary">Показувати вісі координат у правому верхньому кутку екрана.</string>
 </resources>

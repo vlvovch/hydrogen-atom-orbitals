@@ -10,6 +10,7 @@ package com.vlvolad.hydrogenatom;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.preference.PreferenceManager;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -62,7 +63,8 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
         mAtom.draw(unused, Width, Height);
 
         // Draw axes
-        mAtom.drawAxes(unused, Width, Height);
+        if (PreferenceManager.getDefaultSharedPreferences(HAGLActivity.getContextOfApplication()).getBoolean("pref_showaxes", true))
+            mAtom.drawAxes(unused, Width, Height);
     }
 
     @Override
