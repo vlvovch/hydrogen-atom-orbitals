@@ -8,7 +8,6 @@
 package com.vlvolad.hydrogenatom;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -37,12 +36,13 @@ public class HAGLSurfaceView extends GLSurfaceView {
     Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
-            Log.v("timerInertia", "timerInertia");
+            //Log.v("timerInertia", "timerInertia");
             if (!HAGLRenderer.mAtom.rotationFinished()) {
                 timerHandler.postDelayed(this, frequency);
                 return;
             }
             if (HAGLRenderer.mAtom.rotationFinished() && HAGLRenderer.mAtom.fin!=0) {
+                // Render the view only when there is a change in the drawing data
                 setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
             }
             timerHandler.removeCallbacks(timerRunnable);
@@ -65,7 +65,7 @@ public class HAGLSurfaceView extends GLSurfaceView {
 
         clickAxis = new Rect(0, 0, 1, 1);
 
-        // Render the view only when there is a change in the drawing data
+
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
@@ -88,7 +88,6 @@ public class HAGLSurfaceView extends GLSurfaceView {
 
         clickAxis = new Rect(0, 0, 1, 1);
 
-        // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         //setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
@@ -151,12 +150,16 @@ public class HAGLSurfaceView extends GLSurfaceView {
                     if (!mPreviousScale) {
                         HAGLRenderer.mAtom.camera_rot[0] += dy / 10.f * 4.f / mDensity;
                         HAGLRenderer.mAtom.camera_rot[1] += -dx / 10.f * 4.f / mDensity * 2.0 * (y - getHeight()/2 + getHeight()/8) / (getHeight()/2);
+
+                        // Some old experiments with rotation
                         //HAGLRenderer.mAtom.camera_rot[1] += -dx / 10.f * Math.cos(HAGLRenderer.mAtom.camera_rot[0] * Math.PI / 180.) * 1.5 * (y - getHeight()/2) / (getHeight()/2);
                         //HAGLRenderer.mAtom.camera_rot[2] += dx / 10.f * 4.f / mDensity * 2.0 * (7.f*getHeight()/8.f-Math.abs(y - getHeight()/2 + getHeight()/8)) / (getHeight()/2);
+
                         HAGLRenderer.mAtom.motion = true;
-                        //requestRender();
                         if (!timerRunning) {
-                            if (HAGLRenderer.mAtom.inertia != 1.0f) {
+                            //if (HAGLRenderer.mAtom.inertia != 1.0f) {
+                            if (PreferenceManager.getDefaultSharedPreferences(
+                                    HAGLActivity.getContextOfApplication()).getBoolean("pref_inertia", true)) {
                                 setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
                                 timerHandler.postDelayed(timerRunnable, 0);
                                 timerRunning = true;

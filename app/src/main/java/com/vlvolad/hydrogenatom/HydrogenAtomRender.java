@@ -7,7 +7,6 @@
 
 package com.vlvolad.hydrogenatom;
 
-import android.app.ActivityManager;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
@@ -59,12 +58,6 @@ public class HydrogenAtomRender {
     volatile FloatBuffer trinormalanim;
     FloatBuffer tricoloranim1, tricoloranim2;
 
-    FloatBuffer trivertexf;
-    FloatBuffer trinormalf;
-    FloatBuffer tricolorf;
-    FloatBuffer trivertexanimf;
-    FloatBuffer trinormalanimf;
-    FloatBuffer tricoloranimf;
 
     FloatBuffer lineVertexBuffer;
 
@@ -122,9 +115,9 @@ public class HydrogenAtomRender {
         scale = 1.;
         motion = false;
         pause = false;
-        n = 8;
-        l = 5;
-        m = 2;
+        n = 3;
+        l = 2;
+        m = 0;
         fin = 0;
         ox = 0;
         oy = 0;
@@ -317,6 +310,7 @@ public class HydrogenAtomRender {
         return ret;
     }
 
+    // Obsolete(?)
     void reallocateMemoryFinal() {
         trivertex = trimFB(trivertex, trcnt*3);
         trivertex.position(0);
@@ -381,6 +375,34 @@ public class HydrogenAtomRender {
                 camera_rot_lag[k] = camera_rot[k];
         }
         return ret;
+    }
+
+    public void updateRotationMatrix()
+    {
+        float dx = camera_rot[0] - camera_rot_lag[0];
+        float dy = camera_rot[1] - camera_rot_lag[1];
+        float dz = camera_rot[2] - camera_rot_lag[2];
+
+        dx = (camera_rot[0] - camera_rot_lag[0])  * inertia;
+        dy = (camera_rot[1] - camera_rot_lag[1])  * inertia;
+        dz = (camera_rot[2] - camera_rot_lag[2])  * inertia;
+
+        for (int k = 0; k < 3; ++k)
+        {
+            camera_trans_lag[k] += (camera_trans[k] - camera_trans_lag[k]) * inertia;
+            camera_rot_lag[k] += (camera_rot[k] - camera_rot_lag[k])  * inertia;
+        }
+
+        Matrix.setIdentityM(mCurrentRotation, 0);
+        Matrix.rotateM(mCurrentRotation, 0, dx, 1.0f, 0.0f, 0.0f);
+        Matrix.rotateM(mCurrentRotation, 0, dy, 0.0f, 0.0f, -1.0f);
+        //Matrix.rotateM(mCurrentRotation, 0, dz, 0.0f, 1.0f, 0.0f);
+
+        float[] mTemporaryMatrix = new float[16];
+        // Multiply the current rotation by the accumulated rotation, and then set the accumulated
+        // rotation to the result.
+        Matrix.multiplyMM(mTemporaryMatrix, 0, mCurrentRotation, 0, mAccumulatedRotation, 0);
+        System.arraycopy(mTemporaryMatrix, 0, mAccumulatedRotation, 0, 16);
     }
 
     public void drawAxes(GL10 unused, int Width, int Height)
@@ -454,8 +476,6 @@ public class HydrogenAtomRender {
         GLES20.glUniform1i(tHandle, 1);
         tHandle = GLES20.glGetUniformLocation(mProgram, "color");
         GLES20.glUniform4f(tHandle, 1.0f, 0.0f, 0.0f, 1.0f);
-        tHandle = GLES20.glGetUniformLocation(mProgram, "trajectory");
-        GLES20.glUniform1i(tHandle, 1);
 
         tHandle = GLES20.glGetAttribLocation(mProgram, "a_position");
         GLES20.glEnableVertexAttribArray(tHandle);
@@ -484,35 +504,14 @@ public class HydrogenAtomRender {
 
         Matrix.translateM(mVMatrix, 0, 0, 0, -1000 / 2 / zoomIn);
 
-        float dx = camera_rot[0] - camera_rot_lag[0];
-        float dy = camera_rot[1] - camera_rot_lag[1];
-        float dz = camera_rot[2] - camera_rot_lag[2];
-
-        dx = (camera_rot[0] - camera_rot_lag[0])  * inertia;
-        dy = (camera_rot[1] - camera_rot_lag[1])  * inertia;
-        dz = (camera_rot[2] - camera_rot_lag[2])  * inertia;
-
-        for (int k = 0; k < 3; ++k)
-        {
-            camera_trans_lag[k] += (camera_trans[k] - camera_trans_lag[k]) * inertia;
-            camera_rot_lag[k] += (camera_rot[k] - camera_rot_lag[k])  * inertia;
-        }
         Matrix.translateM(mVMatrix, 0, camera_trans_lag[0],
                 camera_trans_lag[1],
                 camera_trans_lag[2]);
 
 
         {
-            Matrix.setIdentityM(mCurrentRotation, 0);
-            Matrix.rotateM(mCurrentRotation, 0, dx, 1.0f, 0.0f, 0.0f);
-            Matrix.rotateM(mCurrentRotation, 0, dy, 0.0f, 0.0f, -1.0f);
-            //Matrix.rotateM(mCurrentRotation, 0, dz, 0.0f, 1.0f, 0.0f);
 
             float[] mTemporaryMatrix = new float[16];
-            // Multiply the current rotation by the accumulated rotation, and then set the accumulated
-            // rotation to the result.
-            Matrix.multiplyMM(mTemporaryMatrix, 0, mCurrentRotation, 0, mAccumulatedRotation, 0);
-            System.arraycopy(mTemporaryMatrix, 0, mAccumulatedRotation, 0, 16);
 
             // Rotate the cube taking the overall rotation into account.
             Matrix.multiplyMM(mTemporaryMatrix, 0, mVMatrix, 0, mAccumulatedRotation, 0);
@@ -535,77 +534,34 @@ public class HydrogenAtomRender {
             fin = 2;
         }
 
+        FloatBuffer vertexArray, normalArray, colorArray1, colorArray2;
+        int polygonCount;
         if (fin>0 && (motion || !rotationFinished()) && animatemode) {
-//            Log.d("Draw", "Animate");
-            int inv = 0;
-            tHandle = GLES20.glGetAttribLocation(mProgram, "a_position");
-            GLES20.glVertexAttribPointer(tHandle, 3,
-                    GLES20.GL_FLOAT, false,
-                    0, trivertexanim);
-            tHandle = GLES20.glGetAttribLocation(mProgram, "a_normal");
-            GLES20.glEnableVertexAttribArray(tHandle);
-            GLES20.glVertexAttribPointer(tHandle, 3,
-                    GLES20.GL_FLOAT, false,
-                    0, trinormalanim);
-            tHandle = GLES20.glGetAttribLocation(mProgram, "a_color");
-            GLES20.glEnableVertexAttribArray(tHandle);
-//            GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
-            for (int rotX = 0; rotX < 2; rotX++)
-                for (int rotY = 0; rotY < 2; rotY++)
-                    for (int rotZ = 0; rotZ < 2; rotZ++) {
-                        Matrix.scaleM(mVMatrix, 0, 1.0f - 2.0f * rotX, 1.0f - 2.0f * rotY, 1.0f - 2.0f * rotZ);  // symmetry wrt to coordinate inversion
-
-                        Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
-
-                        tHandle = GLES20.glGetUniformLocation(mProgram, "u_mvpMatrix");
-                        GLES20.glUniformMatrix4fv(tHandle, 1, false, mMVPMatrix, 0);
-                        tHandle = GLES20.glGetUniformLocation(mProgram, "u_mvMatrix");
-                        GLES20.glUniformMatrix4fv(tHandle, 1, false, mVMatrix, 0);
-
-                        if (rotY > 0 && (((l - m) & 1)) > 0)
-                            inv = 1; //wave function changes sign wrt to z inversion when l-|m| is odd
-                        else inv = 0;
-                        if (drawrks && m != 0)   // for real basis sign can change also when x or y are inverted
-                        {
-                            if (rotZ > 0 && rotX == 0 && (m % 2 == 0) && !drawsign) inv++;
-                            if (rotZ > 0 && rotX == 0 && (m & 1) > 0 && drawsign) inv++;
-                            if (rotX > 0 && rotZ == 0 && !drawsign) inv++;
-                            if (rotX > 0 && rotZ > 0 && (m & 1) > 0) inv++;
-                        }
-
-                        tHandle = GLES20.glGetAttribLocation(mProgram, "a_color");
-                        if (inv % 2 > 0) GLES20.glVertexAttribPointer(tHandle, 3,
-                                GLES20.GL_FLOAT, false,
-                                0, tricoloranim2);
-                        else GLES20.glVertexAttribPointer(tHandle, 3,
-                                GLES20.GL_FLOAT, false,
-                                0, tricoloranim1);
-
-                        if (((rotX + rotY + rotZ) % 2) > 0)
-                            GLES20.glFrontFace(GLES20.GL_CW);  //odd number of inversions changes vertices traversing order
-                        else GLES20.glFrontFace(GLES20.GL_CCW);
-
-                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3 * trcntanim);
-                        Matrix.scaleM(mVMatrix, 0, 1.0f / (1.0f - 2.0f * rotX), 1.0f / (1.0f - 2.0f * rotY), 1.0f / (1.0f - 2.0f * rotZ));
-                    }
-            tHandle = GLES20.glGetAttribLocation(mProgram, "a_normal");
-            GLES20.glDisableVertexAttribArray(tHandle);
-            tHandle = GLES20.glGetAttribLocation(mProgram, "a_color");
-            GLES20.glDisableVertexAttribArray(tHandle);
+            vertexArray  = trivertexanim;
+            normalArray  = trinormalanim;
+            colorArray1  = tricoloranim1;
+            colorArray2  = tricoloranim2;
+            polygonCount = trcntanim;
         }
-        else
+        else {
+            vertexArray  = trivertex;
+            normalArray  = trinormal;
+            colorArray1  = tricolor1;
+            colorArray2  = tricolor2;
+            polygonCount = trcnt;
+        }
+
         {
-//            Log.d("Draw", "Normal");
             int inv = 0;
             tHandle = GLES20.glGetAttribLocation(mProgram, "a_position");
             GLES20.glVertexAttribPointer(tHandle, 3,
                     GLES20.GL_FLOAT, false,
-                    0, trivertex);
+                    0, vertexArray);
             tHandle = GLES20.glGetAttribLocation(mProgram, "a_normal");
             GLES20.glEnableVertexAttribArray(tHandle);
             GLES20.glVertexAttribPointer(tHandle, 3,
                     GLES20.GL_FLOAT, false,
-                    0, trinormal);
+                    0, normalArray);
             tHandle = GLES20.glGetAttribLocation(mProgram, "a_color");
             GLES20.glEnableVertexAttribArray(tHandle);
             for(int rotX = 0; rotX < 2; rotX++)
@@ -634,16 +590,16 @@ public class HydrogenAtomRender {
                         tHandle = GLES20.glGetAttribLocation(mProgram, "a_color");
                         if (inv%2>0) GLES20.glVertexAttribPointer(tHandle, 3,
                                 GLES20.GL_FLOAT, false,
-                                0, tricolor2);  //выбор цвета
+                                0, colorArray2);  // color of a lobe
                         else GLES20.glVertexAttribPointer(tHandle, 3,
                                 GLES20.GL_FLOAT, false,
-                                0, tricolor1);
+                                0, colorArray1);
 
                         if (((rotX+rotY+rotZ)%2)>0) GLES20.glFrontFace(GLES20.GL_CW);
                         else GLES20.glFrontFace(GLES20.GL_CCW);
 
-//                        Log.d("Draw", "trcnt = " + trcnt);
-                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3*trcnt);
+//                        Log.d("Draw", "trcnt = " + polygonCount);
+                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3*polygonCount);
                         Matrix.scaleM(mVMatrix, 0, 1.0f/(1.0f-2.0f*rotX), 1.0f/(1.0f-2.0f*rotY), 1.0f/(1.0f-2.0f*rotZ));
                     }
             tHandle = GLES20.glGetAttribLocation(mProgram, "a_normal");
@@ -663,7 +619,7 @@ public class HydrogenAtomRender {
     }
 
     //fGetOffset finds the approximate point of intersection of the surface
-// between two points with the values fValue1 and fValue2
+    //between two points with the values fValue1 and fValue2
     float fGetOffset(float fValue1, float fValue2, float fValueDesired)
     {
         double fDelta = fValue2 - fValue1;
@@ -718,6 +674,11 @@ public class HydrogenAtomRender {
         vNormalizeVector(rfNormal, rfNormal);
     }
 
+    /*
+     * The code below uses parts of the public domain Marching Cubes Example Program by Cory Bloyd (corysama@yahoo.com)
+     * For the description of the algorithm see  http://astronomy.swin.edu.au/pbourke/modelling/polygonise/
+     * and also http://paulbourke.net/geometry/polygonise/
+     */
     void vMarchCube(int ix, int iy, int iz, float fScale)
     {
 
@@ -780,106 +741,77 @@ public class HydrogenAtomRender {
 
 
         //Draw the triangles that were found.  There can be up to five per cube
-        boolean fl = true;
+
+        FloatBuffer vertexArray, normalArray, colorArray1, colorArray2;
+        int polygonCount;
+
         if (!anim)
         {
-            for(iTriangle = 0; iTriangle < 5 && fl; iTriangle++)
-            {
-                if(MarchingCubes.a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
-                    break;
-
-                if ((9*trcnt + 9)>=size1) {
-                    fl = false;
-                    overflow = true;
-                    break;
-                }
-
-                for(iCorner = 0; iCorner < 3; iCorner++)
-                {
-                    iVertex = MarchingCubes.a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
-
-                    trivertex.put(9*trcnt + 3*iCorner, asEdgeVertex[iVertex].fX);
-                    trivertex.put(9*trcnt + 3*iCorner + 1, asEdgeVertex[iVertex].fY);
-                    trivertex.put(9*trcnt + 3*iCorner + 2, asEdgeVertex[iVertex].fZ);
-                    trinormal.put(9*trcnt + 3*iCorner, asEdgeNorm[iVertex].fX);
-                    trinormal.put(9*trcnt + 3*iCorner + 1, asEdgeNorm[iVertex].fY);
-                    trinormal.put(9*trcnt + 3*iCorner + 2, asEdgeNorm[iVertex].fZ);
-
-                    if (hAtom.ksi(trivertex.get(9*trcnt + 3*iCorner + 2)*avt1/100,
-                            trivertex.get(9*trcnt + 3*iCorner)*avt1/100,
-                            trivertex.get(9*trcnt + 3*iCorner + 1)*avt1/100,n,l,m)>0)
-                    {
-                        tricolor1.put(9*trcnt + 3*iCorner, 1.0f);
-                        tricolor1.put(9*trcnt + 3*iCorner + 1, 0.0f);
-                        tricolor1.put(9*trcnt + 3*iCorner + 2, 0.0f);
-                        tricolor2.put(9*trcnt + 3*iCorner, 0.0f);
-                        tricolor2.put(9*trcnt + 3*iCorner + 1, 0.0f);
-                        tricolor2.put(9*trcnt + 3*iCorner + 2, 1.0f);
-                    }
-                    else
-                    {
-                        tricolor1.put(9*trcnt + 3*iCorner, 0.0f);
-                        tricolor1.put(9*trcnt + 3*iCorner + 1, 0.0f);
-                        tricolor1.put(9*trcnt + 3*iCorner + 2, 1.0f);
-                        tricolor2.put(9*trcnt + 3*iCorner, 1.0f);
-                        tricolor2.put(9*trcnt + 3*iCorner + 1, 0.0f);
-                        tricolor2.put(9*trcnt + 3*iCorner + 2, 0.0f);
-                    }
-                }
-                trcnt++;
-            }
+            vertexArray  = trivertex;
+            normalArray  = trinormal;
+            colorArray1  = tricolor1;
+            colorArray2  = tricolor2;
+            polygonCount = trcnt;
         }
-        else
+        else {
+            vertexArray  = trivertexanim;
+            normalArray  = trinormalanim;
+            colorArray1  = tricoloranim1;
+            colorArray2  = tricoloranim2;
+            polygonCount = trcntanim;
+        }
+
         {
             for(iTriangle = 0; iTriangle < 5; iTriangle++)
             {
                 if(MarchingCubes.a2iTriangleConnectionTable[iFlagIndex][3*iTriangle] < 0)
                     break;
 
-
-                if ((9*trcntanim + 9)>=size1) {
-                    fl = false;
+                if ((9*polygonCount + 9)>=size1) {
                     overflow = true;
                     break;
                 }
-
-
 
                 for(iCorner = 0; iCorner < 3; iCorner++)
                 {
                     iVertex = MarchingCubes.a2iTriangleConnectionTable[iFlagIndex][3*iTriangle+iCorner];
 
+                    vertexArray.put(9*polygonCount + 3*iCorner, asEdgeVertex[iVertex].fX);
+                    vertexArray.put(9*polygonCount + 3*iCorner + 1, asEdgeVertex[iVertex].fY);
+                    vertexArray.put(9*polygonCount + 3*iCorner + 2, asEdgeVertex[iVertex].fZ);
+                    normalArray.put(9*polygonCount + 3*iCorner, asEdgeNorm[iVertex].fX);
+                    normalArray.put(9*polygonCount + 3*iCorner + 1, asEdgeNorm[iVertex].fY);
+                    normalArray.put(9*polygonCount + 3*iCorner + 2, asEdgeNorm[iVertex].fZ);
 
-                    trivertexanim.put(9*trcntanim + 3*iCorner, asEdgeVertex[iVertex].fX);
-                    trivertexanim.put(9*trcntanim + 3*iCorner + 1, asEdgeVertex[iVertex].fY);
-                    trivertexanim.put(9*trcntanim + 3*iCorner + 2, asEdgeVertex[iVertex].fZ);
-                    trinormalanim.put(9*trcntanim + 3*iCorner, asEdgeNorm[iVertex].fX);
-                    trinormalanim.put(9*trcntanim + 3*iCorner + 1, asEdgeNorm[iVertex].fY);
-                    trinormalanim.put(9*trcntanim + 3*iCorner + 2, asEdgeNorm[iVertex].fZ);
-                    if (hAtom.ksi(trivertexanim.get(9*trcntanim + 3*iCorner + 2)*avt1/100,
-                            trivertexanim.get(9*trcntanim + 3*iCorner)*avt1/100,
-                            trivertexanim.get(9*trcntanim + 3*iCorner + 1)*avt1/100,n,l,m)>0)
+                    if (hAtom.ksi(vertexArray.get(9*polygonCount + 3*iCorner + 2)*avt1/100,
+                            vertexArray.get(9*polygonCount + 3*iCorner)*avt1/100,
+                            vertexArray.get(9*polygonCount + 3*iCorner + 1)*avt1/100,n,l,m)>0)
                     {
-                        tricoloranim1.put(9*trcntanim + 3*iCorner, 1.0f);
-                        tricoloranim1.put(9*trcntanim + 3*iCorner + 1, 0.0f);
-                        tricoloranim1.put(9*trcntanim + 3*iCorner + 2, 0.0f);
-                        tricoloranim2.put(9*trcntanim + 3*iCorner, 0.0f);
-                        tricoloranim2.put(9*trcntanim + 3*iCorner + 1, 0.0f);
-                        tricoloranim2.put(9*trcntanim + 3*iCorner + 2, 1.0f);
+                        colorArray1.put(9*polygonCount + 3*iCorner, 1.0f);
+                        colorArray1.put(9*polygonCount + 3*iCorner + 1, 0.0f);
+                        colorArray1.put(9*polygonCount + 3*iCorner + 2, 0.0f);
+                        colorArray2.put(9*polygonCount + 3*iCorner, 0.0f);
+                        colorArray2.put(9*polygonCount + 3*iCorner + 1, 0.0f);
+                        colorArray2.put(9*polygonCount + 3*iCorner + 2, 1.0f);
                     }
                     else
                     {
-                        tricoloranim1.put(9*trcntanim + 3*iCorner, 0.0f);
-                        tricoloranim1.put(9*trcntanim + 3*iCorner + 1, 0.0f);
-                        tricoloranim1.put(9*trcntanim + 3*iCorner + 2, 1.0f);
-                        tricoloranim2.put(9*trcntanim + 3*iCorner, 1.0f);
-                        tricoloranim2.put(9*trcntanim + 3*iCorner + 1, 0.0f);
-                        tricoloranim2.put(9*trcntanim + 3*iCorner + 2, 0.0f);
+                        colorArray1.put(9*polygonCount + 3*iCorner, 0.0f);
+                        colorArray1.put(9*polygonCount + 3*iCorner + 1, 0.0f);
+                        colorArray1.put(9*polygonCount + 3*iCorner + 2, 1.0f);
+                        colorArray2.put(9*polygonCount + 3*iCorner, 1.0f);
+                        colorArray2.put(9*polygonCount + 3*iCorner + 1, 0.0f);
+                        colorArray2.put(9*polygonCount + 3*iCorner + 2, 0.0f);
                     }
                 }
-                trcntanim++;
+                polygonCount++;
             }
         }
+
+        if (!anim)
+            trcnt = polygonCount;
+        else
+            trcntanim = polygonCount;
     }
 
     // Surface generation using the Marching Cubes algorithm
@@ -1014,7 +946,6 @@ public class HydrogenAtomRender {
 //        Log.d("Render", "Get target value start");
 //        Log.d("Render", "Size: " + 10*(int)(250.0f/fStepSize+1)*(int)(100.f*Math.sqrt(l+1.f)));
           fTargetValue = (float)hAtom.getEquiValue(pct/100., 10*(int)(250.0f/fStepSize+1), 2.5*avt1, (int)(100.f*Math.sqrt(l+1.f)), n, l, m);
-//        fTargetValue = (float)hAtom.getEquiValue(pct/100., 2*(int)(250.0f/fStepSize+1), 2.5*avt1, (int)(20.f*Math.sqrt(l+1.f)), n, l, m);
 //        Log.d("Render", "fTargetValue: " + fTargetValue);
 //        Log.d("Render", "Get target value finish");
 

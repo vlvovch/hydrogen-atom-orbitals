@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.view.Window;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -143,8 +142,6 @@ public class OrbitalDialog extends Activity {
         else {
             ((RadioButton)findViewById(R.id.radioComplex)).setChecked(true);
         }
-//        FlurryAgent.onStartSession(this);
-//        FlurryAgent.logEvent("AboutActivity",true);
     }
 
     /**
@@ -175,7 +172,5 @@ public class OrbitalDialog extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-//        FlurryAgent.endTimedEvent("AboutActivity");
-//        FlurryAgent.onEndSession(this);
     }
 }

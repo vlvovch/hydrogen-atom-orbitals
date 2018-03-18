@@ -162,8 +162,6 @@ public class HAGLActivity extends Activity {
                 HAGLRenderer.mAtom.regenerate();
             }});
 
-//        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
         display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
         //mGLView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
@@ -516,7 +514,6 @@ public class HAGLActivity extends Activity {
 
                 return true;
             case R.id.action_information:
-                //showHelp();
                 intentParam = new Intent(HAGLActivity.this, InformationActivity.class);
                 startActivity(intentParam);
                 return true;

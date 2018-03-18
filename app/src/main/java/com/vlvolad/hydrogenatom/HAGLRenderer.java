@@ -49,7 +49,6 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
         GLES20.glLinkProgram(mProgram);                  // creates OpenGL ES program executables
 
         mAtom.mProgram = mProgram;
-
     }
 
     @Override
@@ -61,6 +60,8 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         Matrix.setIdentityM(mAtom.mVMatrix, 0);
 
+        // Update Rotation Matrix
+        mAtom.updateRotationMatrix();
 
         // Draw pendulum
         mAtom.animatemode = PreferenceManager.getDefaultSharedPreferences(HAGLActivity.getContextOfApplication()).getBoolean("pref_fastanimate", true);
@@ -78,8 +79,6 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
         Width = width;
         Height = height;
         GLES20.glViewport(0, 0, width, height);
-
-        float ratio = (float) width / height;
 
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
@@ -152,7 +151,6 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
                     "    } \n" +
                     "    v_light = ambientLight + diffuseLight + specularLight; \n" +
                     "    v_color = a_color; \n" +
-                    //"    v_color = color; \n" +
                     "    gl_Position = u_mvpMatrix * mcPosition; \n" +
                     "}";
 
@@ -161,36 +159,14 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
             "precision highp float; \n" +
                     "uniform vec4 color; \n" +
                     "uniform int light; \n" +
-                    "uniform int trajectory; \n" +
+                    //"uniform int trajectory; \n" +
                     "varying vec4 v_light; \n" +
                     "varying vec4 v_color; \n" +
                     "void main() { \n" +
                     "    if (light>0) gl_FragColor = v_light; \n" +
-                    //"    else if (trajectory>0) gl_FragColor = v_color; \n" +
                     "    else gl_FragColor = color; \n" +
                     "}";
 
-
-    private final String vertexShaderCodeTraj =
-            "uniform mat4 u_mvpMatrix; \n" +
-                    "// Attributes \n" +
-                    "attribute vec4 a_position; \n" +
-                    "attribute vec4 a_color; \n" +
-                    "// Varyings \n" +
-                    "varying vec4 v_color; \n" +
-                    "void main() { \n" +
-                    "    // Define position and normal in model coordinates \n" +
-                    "    vec4 mcPosition = a_position; \n" +
-                    "    gl_Position = u_mvpMatrix * mcPosition; \n" +
-                    "    v_color = a_color; \n" +
-                    "}";
-
-
-    private final String fragmentShaderCodeTraj =
-            "varying vec4 v_color; \n" +
-                    "void main() { \n" +
-                    "    gl_FragColor = vec4(1.0, 0., 0., 1.); \n" + //v_color; \n" +
-                    "}";
 
     public static int loadShader(int type, String shaderCode){
 
