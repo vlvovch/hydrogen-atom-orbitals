@@ -44,5 +44,8 @@
     <string name="github_url">https://github.com/vlvovch/hydrogen-atom-orbitals</string>
     <string name="settings">Parametres</string>
     <string name="pref_showaxes">Axes de coordonnées</string>
-    <string name="pref_showaxes_summary">Afficher les axes de coordonnées dans le coin supérieur droit.</string>
+    <string name="pref_showaxes_summary">Afficher les axes de coordonnées dans le coin supérieur droit</string>
+    <string name="pref_fastanimate_summary">Moins de polygones lorsque l\'orbite est en zoom ou en rotation pour augmenter les performances</string>
+    <string name="pref_fastanimate">Optimisation de la rotation/zoom</string>
+    <string name="pref_inertia" >Inertie pendant la rotation</string>
 </resources>

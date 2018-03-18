@@ -92,6 +92,7 @@ public class HydrogenAtomRender {
     public volatile float camera_trans_lag[];
     public volatile float camera_rot_lag[];
     public volatile float zoomIn;
+    public volatile float inertia;
     int buttonState;
     int memoryclass;
 
@@ -101,8 +102,8 @@ public class HydrogenAtomRender {
     public final float[] mProjMatrix = new float[16];
     public final float[] mVMatrix = new float[16];
 
-    public float[] mAccumulatedRotation;
-    public float[] mCurrentRotation;
+    public volatile float[] mAccumulatedRotation;
+    public volatile float[] mCurrentRotation;
 
     private FloatBuffer lightDir, lightHP, lightAC, lightDC, lightSC;
     private FloatBuffer materialAF, materialDF, materialSF;
@@ -169,7 +170,11 @@ public class HydrogenAtomRender {
         camera_trans_lag[0] = camera_trans_lag[1] = camera_trans_lag[2] = 0;
         camera_rot_lag[0] = camera_rot_lag[1] = camera_rot_lag[2] = 0;
 
-        zoomIn = 1.0f;
+        //inertia = 0.2f;
+        inertia = 1.0f;
+
+        zoomIn = 0.85f;
+        //zoomIn = 1.0f;
 
         pickRandomOrbital(5);
 
@@ -363,6 +368,21 @@ public class HydrogenAtomRender {
         return buf;
     }
 
+    public boolean rotationFinished() {
+        boolean ret = true;
+        for (int k = 0; k < 3; ++k)
+        {
+            if (Math.abs(camera_rot_lag[k]-camera_rot[k])>1.e0f)
+                ret = false;
+            //Log.v("rotation", k + " "+  Math.abs(camera_rot_lag[k]-camera_rot[k]));
+        }
+        if (ret) {
+            for (int k = 0; k < 3; ++k)
+                camera_rot_lag[k] = camera_rot[k];
+        }
+        return ret;
+    }
+
     public void drawAxes(GL10 unused, int Width, int Height)
     {
         HAGLRenderer.perspectiveGL(mProjMatrix, 45.0f,(float)(Width)/Height,10.0f,4000.0f);
@@ -371,31 +391,9 @@ public class HydrogenAtomRender {
         float xymove = 5.5f;
         Matrix.translateM(mVMatrix, 0, xymove * (float)(Width)/Height, 0.9f*xymove, -20.f);
 
-        float dx = camera_rot[0] - camera_rot_lag[0];
-        float dy = camera_rot[1] - camera_rot_lag[1];
-        float dz = camera_rot[2] - camera_rot_lag[2];
-
-        for (int k = 0; k < 3; ++k)
-        {
-            camera_trans_lag[k] += (camera_trans[k] - camera_trans_lag[k]);// * inertia;
-            camera_rot_lag[k] += (camera_rot[k] - camera_rot_lag[k]);// * inertia;
-        }
-        Matrix.translateM(mVMatrix, 0, camera_trans_lag[0],
-                camera_trans_lag[1],
-                camera_trans_lag[2]);
-
 
         {
-            Matrix.setIdentityM(mCurrentRotation, 0);
-            Matrix.rotateM(mCurrentRotation, 0, dx, 1.0f, 0.0f, 0.0f);
-            Matrix.rotateM(mCurrentRotation, 0, dy, 0.0f, 0.0f, -1.0f);
-            //Matrix.rotateM(mCurrentRotation, 0, dz, 0.0f, 1.0f, 0.0f);
-
             float[] mTemporaryMatrix = new float[16];
-            // Multiply the current rotation by the accumulated rotation, and then set the accumulated
-            // rotation to the result.
-            Matrix.multiplyMM(mTemporaryMatrix, 0, mCurrentRotation, 0, mAccumulatedRotation, 0);
-            System.arraycopy(mTemporaryMatrix, 0, mAccumulatedRotation, 0, 16);
 
             // Rotate the cube taking the overall rotation into account.
             Matrix.multiplyMM(mTemporaryMatrix, 0, mVMatrix, 0, mAccumulatedRotation, 0);
@@ -444,7 +442,7 @@ public class HydrogenAtomRender {
         GLES20.glDrawArrays(GLES20.GL_LINES, 0, 2);
     }
 
-    //отображение поверхностей
+    // surface drawing
     public void draw(GL10 unused, int Width, int Height)
     {
 //        Log.d("Draw", "Start");
@@ -490,10 +488,14 @@ public class HydrogenAtomRender {
         float dy = camera_rot[1] - camera_rot_lag[1];
         float dz = camera_rot[2] - camera_rot_lag[2];
 
+        dx = (camera_rot[0] - camera_rot_lag[0])  * inertia;
+        dy = (camera_rot[1] - camera_rot_lag[1])  * inertia;
+        dz = (camera_rot[2] - camera_rot_lag[2])  * inertia;
+
         for (int k = 0; k < 3; ++k)
         {
-            camera_trans_lag[k] += (camera_trans[k] - camera_trans_lag[k]);// * inertia;
-            camera_rot_lag[k] += (camera_rot[k] - camera_rot_lag[k]);// * inertia;
+            camera_trans_lag[k] += (camera_trans[k] - camera_trans_lag[k]) * inertia;
+            camera_rot_lag[k] += (camera_rot[k] - camera_rot_lag[k])  * inertia;
         }
         Matrix.translateM(mVMatrix, 0, camera_trans_lag[0],
                 camera_trans_lag[1],
@@ -533,7 +535,7 @@ public class HydrogenAtomRender {
             fin = 2;
         }
 
-        if (fin>0 && motion && animatemode) {
+        if (fin>0 && (motion || !rotationFinished()) && animatemode) {
 //            Log.d("Draw", "Animate");
             int inv = 0;
             tHandle = GLES20.glGetAttribLocation(mProgram, "a_position");

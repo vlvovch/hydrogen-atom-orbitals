@@ -5,4 +5,13 @@
         android:title="@string/pref_showaxes"
         android:summary="@string/pref_showaxes_summary"
         android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="pref_fastanimate"
+        android:title="@string/pref_fastanimate"
+        android:summary="@string/pref_fastanimate_summary"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="pref_inertia"
+        android:title="@string/pref_inertia"
+        android:defaultValue="true" />
 </PreferenceScreen>

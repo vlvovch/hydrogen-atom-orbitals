@@ -44,5 +44,8 @@
     <string name="github_url">https://github.com/vlvovch/hydrogen-atom-orbitals</string>
     <string name="settings">Einstellungen</string>
     <string name="pref_showaxes">Koordinatenachsen</string>
-    <string name="pref_showaxes_summary">Zeigen die Koordinatenachsen in der oberen rechten Ecke.</string>
+    <string name="pref_showaxes_summary">Zeigen die Koordinatenachsen in der oberen rechten Ecke</string>
+    <string name="pref_fastanimate_summary">Weniger Polygone, während das Orbital gezoomt oder gedreht wird, um die Leistung zu erhöhen</string>
+    <string name="pref_fastanimate">Rotation/Zoom-Optimierung</string>
+    <string name="pref_inertia" >Trägheit während der Rotation</string>
 </resources>

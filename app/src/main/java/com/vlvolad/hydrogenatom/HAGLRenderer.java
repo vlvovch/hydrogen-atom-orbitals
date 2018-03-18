@@ -11,6 +11,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -53,6 +54,8 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
 
     @Override
     public void onDrawFrame(GL10 unused) {
+        Log.v("onDrawFrame", "Draw");
+
 
         GLES20.glUseProgram(mAtom.mProgram);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -60,6 +63,7 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
 
 
         // Draw pendulum
+        mAtom.animatemode = PreferenceManager.getDefaultSharedPreferences(HAGLActivity.getContextOfApplication()).getBoolean("pref_fastanimate", true);
         mAtom.draw(unused, Width, Height);
 
         // Draw axes

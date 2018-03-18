@@ -96,6 +96,10 @@ public class HAGLActivity extends Activity {
 
     static String TAG = "HAGLActivity";
 
+    static Context getContextOfApplication() {
+        return contextOfApplication;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +134,12 @@ public class HAGLActivity extends Activity {
                 HAGLActivity.this).getFloat("percent", 70.f);
         HAGLRenderer.mAtom.fStepSize = PreferenceManager.getDefaultSharedPreferences(
                 HAGLActivity.this).getFloat("step_size", 6.f);
+
+        if (PreferenceManager.getDefaultSharedPreferences(
+                HAGLActivity.this).getBoolean("pref_inertia", true))
+            HAGLRenderer.mAtom.inertia = 0.2f;
+        else
+            HAGLRenderer.mAtom.inertia = 1.0f;
 
         HAGLRenderer.mAtom.fin = 0;
         updateOrbitalName();
@@ -323,10 +333,6 @@ public class HAGLActivity extends Activity {
 
     }
 
-    public static Context getContextOfApplication(){
-        return contextOfApplication;
-    }
-
     private void regenerate() {
         if (!isRunning) {
             HAGLRenderer.mAtom.n = PreferenceManager.getDefaultSharedPreferences(
@@ -452,6 +458,12 @@ public class HAGLActivity extends Activity {
             HAGLRenderer.mAtom.toCont = false;
             regenerate();
         }
+
+        if (PreferenceManager.getDefaultSharedPreferences(
+                HAGLActivity.this).getBoolean("pref_inertia", true))
+            HAGLRenderer.mAtom.inertia = 0.2f;
+        else
+            HAGLRenderer.mAtom.inertia = 1.0f;
 
         if (Build.VERSION.SDK_INT >= 11 && mRateState != PreferenceManager.getDefaultSharedPreferences(
                 HAGLActivity.this).getBoolean("rate_clicked", false))
