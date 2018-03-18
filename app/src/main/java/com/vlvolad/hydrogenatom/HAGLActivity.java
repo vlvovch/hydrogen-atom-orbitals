@@ -426,6 +426,12 @@ public class HAGLActivity extends Activity {
             // thread:
             public void run() {
                 HAGLRenderer.mAtom.InterruptThread();
+
+                for(int k = 0; k < 3; ++k) {
+                    HAGLRenderer.mAtom.camera_rot_lag[k] = HAGLRenderer.mAtom.camera_rot[k];
+                }
+                mGLView.timerHandler.removeCallbacks(mGLView.timerRunnable);
+                mGLView.timerRunning = false;
             }});
         mGLView.onPause();
     }

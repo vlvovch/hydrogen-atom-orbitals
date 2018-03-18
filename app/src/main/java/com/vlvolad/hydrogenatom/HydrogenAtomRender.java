@@ -94,6 +94,7 @@ public class HydrogenAtomRender {
     public final float[] mMVPMatrix = new float[16];
     public final float[] mProjMatrix = new float[16];
     public final float[] mVMatrix = new float[16];
+    public final float[] mAxesTranslateMatrix = new float[16];
 
     public volatile float[] mAccumulatedRotation;
     public volatile float[] mCurrentRotation;
@@ -411,12 +412,14 @@ public class HydrogenAtomRender {
         Matrix.setIdentityM(mVMatrix, 0);
 
         float xymove = 5.5f;
-        Matrix.translateM(mVMatrix, 0, xymove * (float)(Width)/Height, 0.9f*xymove, -20.f);
+        Matrix.translateM(mVMatrix, 0, -xymove * (float)(Width)/Height, -0.9f*xymove, -20.f);
 
+        Matrix.setIdentityM(mAxesTranslateMatrix, 0);
+        Matrix.translateM(mAxesTranslateMatrix, 0, 1.3f, 1.18f, 0.f);
+
+        float[] mTemporaryMatrix = new float[16];
 
         {
-            float[] mTemporaryMatrix = new float[16];
-
             // Rotate the cube taking the overall rotation into account.
             Matrix.multiplyMM(mTemporaryMatrix, 0, mVMatrix, 0, mAccumulatedRotation, 0);
             System.arraycopy(mTemporaryMatrix, 0, mVMatrix, 0, 16);
@@ -426,7 +429,8 @@ public class HydrogenAtomRender {
 
         Matrix.scaleM(mVMatrix, 0, mn, mn, mn);
 
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
+        Matrix.multiplyMM(mTemporaryMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
+        Matrix.multiplyMM(mMVPMatrix, 0, mAxesTranslateMatrix, 0, mTemporaryMatrix, 0);
 
         int tHandle = GLES20.glGetUniformLocation(mProgram, "u_mvpMatrix");
         GLES20.glUniformMatrix4fv(tHandle, 1, false, mMVPMatrix, 0);

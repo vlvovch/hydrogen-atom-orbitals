@@ -30,7 +30,7 @@ public class HAGLSurfaceView extends GLSurfaceView {
     public float mDensity;
     private Rect clickAxis;
     static int frequency = 50;
-    private boolean timerRunning;
+    boolean timerRunning;
 
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
