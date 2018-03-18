@@ -9,7 +9,7 @@ This repository contains the source code of the [Hydrogen Atom Orbitals app for 
 
 The code is designed to be used via Android Studio with Gradle.
 
-# Short description of the app 
+## Short description of the app 
 
 
 The app visualizes the electron orbitals of the hydrogen atom in 3D by using OpenGL.
