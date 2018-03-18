@@ -64,7 +64,7 @@ public class HAGLRenderer implements GLSurfaceView.Renderer{
         mAtom.updateRotationMatrix();
 
         // Draw pendulum
-        mAtom.animatemode = PreferenceManager.getDefaultSharedPreferences(HAGLActivity.getContextOfApplication()).getBoolean("pref_fastanimate", true);
+        mAtom.animatemode = PreferenceManager.getDefaultSharedPreferences(HAGLActivity.getContextOfApplication()).getBoolean("pref_fastanimate", false);
         mAtom.draw(unused, Width, Height);
 
         // Draw axes

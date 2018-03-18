@@ -9,7 +9,7 @@
         android:key="pref_fastanimate"
         android:title="@string/pref_fastanimate"
         android:summary="@string/pref_fastanimate_summary"
-        android:defaultValue="true" />
+        android:defaultValue="false" />
     <CheckBoxPreference
         android:key="pref_inertia"
         android:title="@string/pref_inertia"
