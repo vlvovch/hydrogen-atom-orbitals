@@ -1,10 +1,10 @@
-# Hydrogen Atom Orbitals
+# Hydrogen Atom Orbitals <a href='https://play.google.com/store/apps/details?id=com.vlvolad.hydrogenatom'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height=60px/></a>
 
 
 This repository contains the source code of the [Hydrogen Atom Orbitals app for Android](https://play.google.com/store/apps/details?id=com.vlvolad.hydrogenatom)
 
 
-<a href='https://play.google.com/store/apps/details?id=com.vlvolad.hydrogenatom'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height=60px/></a>
+
 
 
 The code is designed to be used via Android Studio with Gradle.
