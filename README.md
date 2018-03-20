@@ -1,3 +1,5 @@
+<img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" align="right" />
+
 # Hydrogen Atom Orbitals <a href='https://play.google.com/store/apps/details?id=com.vlvolad.hydrogenatom'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height=60px/></a>
 
 
