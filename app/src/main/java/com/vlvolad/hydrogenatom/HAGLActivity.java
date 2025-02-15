@@ -51,6 +51,9 @@ public class HAGLActivity extends Activity {
 
     static int frequency = 50;
 
+    static float stepSizeMin = 2.0f;
+    static float stepSizeMax = 12.0f;
+
     //runs without a timer by reposting this handler at the end of the runnable
     Handler timerHandler = new Handler();
     Runnable timerRunnable = new Runnable() {
@@ -175,7 +178,7 @@ public class HAGLActivity extends Activity {
                 if (!isRunning) {
                     HAGLRenderer.mAtom.pickRandomOrbital(5);
                     HAGLRenderer.mAtom.fin = 0;
-                    HAGLRenderer.mAtom.fStepSize = 2.f + seekBarStepSize.getProgress() / 10.f;
+                    HAGLRenderer.mAtom.fStepSize = stepSizeMin + (stepSizeMax - stepSizeMin) * seekBarStepSize.getProgress() / 100.f;
                     HAGLRenderer.mAtom.pct = seekBarPercent.getProgress() + 1;
                     HAGLRenderer.mAtom.setRealKsi(PreferenceManager.getDefaultSharedPreferences(
                             HAGLActivity.this).getBoolean("wave_function_real", true));
@@ -225,7 +228,7 @@ public class HAGLActivity extends Activity {
                     HAGLRenderer.mAtom.setRealKsi(PreferenceManager.getDefaultSharedPreferences(
                             HAGLActivity.this).getBoolean("wave_function_real", true));
                     HAGLRenderer.mAtom.fin = 0;
-                    HAGLRenderer.mAtom.fStepSize = 2.f + seekBarStepSize.getProgress() / 10.f;
+                    HAGLRenderer.mAtom.fStepSize = stepSizeMin + (stepSizeMax - stepSizeMin) * seekBarStepSize.getProgress() / 100.f;
                     HAGLRenderer.mAtom.pct = seekBarPercent.getProgress() + 1;
                     updateOrbitalName();
                     findViewById(R.id.progress).setVisibility(View.VISIBLE);
@@ -310,7 +313,7 @@ public class HAGLActivity extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
                 progress = progressValue;
-                textViewStepSize.setText(String.format("%.1f", 2. + progress / 10.));
+                textViewStepSize.setText(String.format("%.1f", stepSizeMin + (stepSizeMax - stepSizeMin) * progress / 100.f));
 //                Toast.makeText(getApplicationContext(), "Changing seekbar's progress", Toast.LENGTH_SHORT).show();
             }
 
@@ -322,7 +325,7 @@ public class HAGLActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                textViewStepSize.setText(String.format("%.1f", 2. + progress / 10.));
+                textViewStepSize.setText(String.format("%.1f", stepSizeMin + (stepSizeMax - stepSizeMin) * progress / 100.f));
 //                Toast.makeText(getApplicationContext(), "Stopped tracking seekbar", Toast.LENGTH_SHORT).show();
             }
         });
@@ -343,7 +346,7 @@ public class HAGLActivity extends Activity {
             HAGLRenderer.mAtom.setRealKsi(PreferenceManager.getDefaultSharedPreferences(
                     HAGLActivity.this).getBoolean("wave_function_real", true));
             HAGLRenderer.mAtom.fin = 0;
-            HAGLRenderer.mAtom.fStepSize = 2.f + seekBarStepSize.getProgress() / 10.f;
+            HAGLRenderer.mAtom.fStepSize = stepSizeMin + (stepSizeMax - stepSizeMin) * seekBarStepSize.getProgress() / 100.f;
             HAGLRenderer.mAtom.pct = seekBarPercent.getProgress() + 1;
             updateOrbitalName();
             findViewById(R.id.progress).setVisibility(View.VISIBLE);
@@ -490,41 +493,37 @@ public class HAGLActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menu_item_share:
-                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getText(R.string.share_subject).toString());
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getText(R.string.share_text).toString());
-                startActivity(Intent.createChooser(sharingIntent, getText(R.string.share_via).toString()));
-                return true;
-            case R.id.action_settings:
-                Intent intentParam = new Intent(HAGLActivity.this, SettingsActivity.class);
-                startActivity(intentParam);
-                return true;
-            case R.id.action_wiki:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getText(R.string.wikipedia_url).toString())));
-                return true;
-            case R.id.action_rate:
-                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                } catch (Exception e) {
-//                    Log.d("Information", "Message =" + e);
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-                }
-
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("rate_clicked", true).apply();
-                if(Build.VERSION.SDK_INT >= 11)
-                    invalidateOptionsMenu();
-
-                return true;
-            case R.id.action_information:
-                intentParam = new Intent(HAGLActivity.this, InformationActivity.class);
-                startActivity(intentParam);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.menu_item_share) {
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getText(R.string.share_subject).toString());
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getText(R.string.share_text).toString());
+            startActivity(Intent.createChooser(sharingIntent, getText(R.string.share_via).toString()));
+            return true;
+        } else if (item.getItemId() == R.id.action_settings) {
+            Intent intentParam = new Intent(HAGLActivity.this, SettingsActivity.class);
+            startActivity(intentParam);
+            return true;
+        } else if (item.getItemId() == R.id.action_wiki) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getText(R.string.wikipedia_url).toString())));
+            return true;
+        } else if (item.getItemId() == R.id.action_rate) {
+            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+            } catch (Exception e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            }
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("rate_clicked", true).apply();
+            if (Build.VERSION.SDK_INT >= 11)
+                invalidateOptionsMenu();
+            return true;
+        } else if (item.getItemId() == R.id.action_information) {
+            Intent intentParam = new Intent(HAGLActivity.this, InformationActivity.class);
+            startActivity(intentParam);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 

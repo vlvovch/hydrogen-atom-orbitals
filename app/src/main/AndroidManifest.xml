@@ -11,6 +11,7 @@
 
         <activity
             android:name="com.vlvolad.hydrogenatom.HAGLActivity"
+            android:exported="true"
             android:label="@string/app_name"
             android:configChanges="orientation|keyboardHidden|screenSize" >
 

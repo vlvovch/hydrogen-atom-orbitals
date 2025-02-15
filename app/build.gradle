@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace 'com.vlvolad.hydrogenatom'
     signingConfigs {
         release {
             Properties properties = new Properties()
@@ -15,20 +16,20 @@ android {
         }
     }
     compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+//    buildToolsVersion '25.0.3'
     defaultConfig {
         applicationId 'com.vlvolad.hydrogenatom'
         minSdkVersion 10
-        targetSdkVersion 25
-        versionCode 8
-        versionName "1.2"
+        targetSdkVersion 34
+        versionCode 9
+        versionName "1.2.1"
     }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
     }
     productFlavors {
@@ -36,6 +37,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:25.3.1'
 }
